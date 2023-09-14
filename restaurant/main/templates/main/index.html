@@ -1,3 +1,5 @@
+{% extends "layout.html" %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +8,18 @@
     <title>Main Page</title>
 </head>
 <body>
-    <h1>Hello</h1>
-    <a href="{% url 'main:registration' %}">Registration</a>
-    <a href="{% url 'main:login' %}">Login</a>
+    {% block content %} 
+
+    {% if user.is_authenticated %}
+
+    <h1>Hello, {{ user.username }} | <a href="{% url 'logout' %}">Logout</a></h1>
+
+    {% else %}
+
+    <h1>Hello, please <a href="{% url 'login' %}">login</a> or <a href="{% url 'registration' %}">registrate</a></h1>
+
+    {% endif %}
+
+    {% endblock %}
 </body>
 </html>

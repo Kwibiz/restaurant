@@ -1,3 +1,5 @@
+{% extends "layout.html" %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,5 +9,23 @@
 </head>
 <body>
     
+
+    {% block content %}
+        
+        <h1>Registration:</h1>
+        {% if form.errors %}
+        <h3 style="color: red;">There was an error with your form</h3>
+        {% endif %}
+        <form action="{% url 'registration' %}" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <br>
+            <br>
+            <input type="submit" value="Register">
+        </form>
+        <br>
+        <br>
+        <a href="{% url 'index' %}"><button>Main Page</button></a>
+    {% endblock %}
 </body>
 </html>
