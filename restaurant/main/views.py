@@ -3,8 +3,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from .models import Customer
 
 
 def index(request):
@@ -47,23 +47,27 @@ def change_password(request):
     return render(request, 'main/change_password.html')
 
 
+@login_required(login_url='/login/')
+def edit_profile(request):
+    id = request.user.id
+    customer = Customer.objects.get(user_id=id)
+    if request.method == 'POST':
+        new_first_name = request.POST.get('first_name')
+        new_last_name = request.POST.get('last_name')
+        new_adress = request.POST.get('adress')
+        customer.first_name = new_first_name
+        customer.last_name = new_last_name
+        customer.adress = new_adress
+        customer.save()
 
+    return render(request, 'main/edit_profile.html', context={
+        'info': customer
+    })
 
-# @login_required(login_url='/login/')
-# def change_password(request):
-#     if request.method == 'POST':
-#         username = request.user.username
-#         user = User.objects.get(username=username)
-#         new_password = request.get('new_password')
-#         user.set_password(new_password)
-#         user.save()
-#         return redirect('profile')
-#     return render(request, 'main/change_password.html')
-        
 
 class LoginUserView(LoginView):
     template_name = 'main/login.html'
-    next_page = 'profile'
+    next_page = 'index'
     redirect_authenticated_user = True
 
 
