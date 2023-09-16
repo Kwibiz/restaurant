@@ -19,6 +19,9 @@ def registration(request):
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             login(request, user)
+            user_id = request.user.id
+            customer = Customer.objects.create(user_id=user_id)
+            customer.save()
 
             return redirect('index')
     
@@ -55,9 +58,19 @@ def edit_profile(request):
         new_first_name = request.POST.get('first_name')
         new_last_name = request.POST.get('last_name')
         new_adress = request.POST.get('adress')
-        customer.first_name = new_first_name
-        customer.last_name = new_last_name
-        customer.adress = new_adress
+        vegetarian = request.POST.get('vegetarian')
+        if new_first_name:
+            customer.first_name = new_first_name
+        if new_last_name:
+            customer.last_name = new_last_name
+        if new_adress:    
+            customer.adress = new_adress
+        if vegetarian:
+            if vegetarian == 'No':
+                vegetarian = False
+            else:
+                vegetarian = True
+            customer.is_vegetarian = vegetarian
         customer.save()
 
     return render(request, 'main/edit_profile.html', context={
