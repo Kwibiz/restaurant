@@ -12,6 +12,19 @@
 
         <h1>Profile page | <a href="{% url 'index' %}">Home</a></h1>
         <br>
+        <h3>User info:</h3>
+        {% if not customer.first_name %}
+        <h2 style="color: crimson;">Please fill the <a href="{% url 'edit_profile' %}">info</a> page</h2>
+        {% else %}
+        <ul>
+            <li>First name: {{ customer.first_name }}</li>
+            <li>Last name: {{ customer.last_name }}</li>
+            <li>Adress: {{ customer.adress}}</li>
+            <li>Vegetarian: {% if customer.is_vegetarian %}Yes{% else %}No{% endif %}</li>
+            <li>{% if customer.has_reservation %}You have the reservation{% else %}No reservations{% endif %}</li>
+        </ul>
+        {% endif %}
+        <br>
         <a href="{% url 'change_password' %}">Change password</a>
         <br>
         <a href="{% url 'edit_profile' %}">Edit profile</a>

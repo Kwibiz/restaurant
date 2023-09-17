@@ -37,8 +37,13 @@ def profile(request):
     if not request.user.is_authenticated:
         return redirect('login')
     username = request.user.username
+    id = request.user.id
+    customer = Customer.objects.get(user_id=id)
 
-    return render(request, 'main/profile.html', context={'username':username})
+    return render(request, 'main/profile.html', context={
+        'username': username,
+        'customer': customer
+        })
 
 
 @login_required(login_url='/login/')
