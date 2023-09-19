@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Order{% endblock title %}</title>
+</head>
+<body>
+    {% block content %}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <h3>Establishment:</h3>
+        {% for el in establishments %}
+        <label for="establishment">{{ el.name }}</label>
+        <input type="radio" name="establishment" id="establishment" value="{{ el.name }}">
+        {% endfor %}
+        <br><br>
+        <!-- {% for table in free_tables %}
+        <label for="table">{{ table.table_number }}</label>
+        <input type="radio" name="table" id="table" value="{{ table.table_number }}">
+        {% endfor %} -->
+        <h3>Menu:</h3>
+        {% for dish in dishes %}
+        <label for="dish">{{ dish.name}}</label>
+        <input type="radio" name="dish" id="dish" value="{{ dish.name }}">
+        {% endfor %}
+        <br><br>
+        <label for="time">Reservation for:</label>
+        <input type="datetime-local" name="time" id="time">
+        <br><br>
+        <input type="submit" value="Submit order    ">
+
+    </form>
+    <br><br>
+    <a href="{% url 'profile' %}"><button>Profile</button></a>
+
+    {% endblock content %}
+</body>
+</html>

@@ -24,10 +24,25 @@
             <li>{% if customer.has_reservation %}You have the reservation{% else %}No reservations{% endif %}</li>
         </ul>
         {% endif %}
+        
+        <h3>Reservation:</h3>
+        {% if not reservation.time %}
+        <h2 style="color: crimson;">You don't have a reservation</h2>
+        {% else %}
+        <ul>
+            <li>Establishment: {{ reservation.establishment }}</li>
+            <li>Table: №{{ reservation.table }}</li>
+            <li>Dish: {{ reservation.dish }}</li>
+            <li>Time: {{ reservation.time }}</li>
+        </ul>
+        <a href="{% url 'delete_order' %}"><button>Delete order</button></a>
+        {% endif %}
         <br>
         <a href="{% url 'change_password' %}">Change password</a>
         <br>
         <a href="{% url 'edit_profile' %}">Edit profile</a>
+        <br>
+        <a href="{% url 'make_order' %}">Make order</a>
 
     {% endblock %}
 </body>

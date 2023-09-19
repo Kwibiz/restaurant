@@ -25,7 +25,7 @@ class Tables(models.Model):
     table_number = models.IntegerField()
     table_is_reserved = models.BooleanField(default=False)
     customer = models.OneToOneField(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    reservaion_time = models.DateTimeField(blank=True, null=True)
+    reservation_time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Tables"
@@ -57,7 +57,7 @@ class Order(models.Model):
 
 class Reservation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    establishment = models.ForeignKey(Establishment, on_delete=models.CASCADE)
-    table = models.OneToOneField(Tables, on_delete=models.CASCADE)
-    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
-    time = models.DateTimeField()
+    establishment = models.ForeignKey(Establishment, on_delete=models.CASCADE, null=True)
+    table = models.OneToOneField(Tables, on_delete=models.CASCADE, null=True)
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE, null=True)
+    time = models.DateTimeField(null=True)

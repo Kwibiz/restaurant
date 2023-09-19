@@ -4,7 +4,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
-from .models import Customer
+from .models import Customer, Establishment, Tables, Dish, Reservation
 
 
 def index(request):
@@ -22,6 +22,8 @@ def registration(request):
             user_id = request.user.id
             customer = Customer.objects.create(user_id=user_id)
             customer.save()
+            user_for_reservation = Reservation.objects.create(user_id=user_id)
+            user_for_reservation.save()
 
             return redirect('index')
     
@@ -39,10 +41,15 @@ def profile(request):
     username = request.user.username
     id = request.user.id
     customer = Customer.objects.get(user_id=id)
+    try:
+        reservation = Reservation.objects.get(user_id=id)
+    except:
+        reservation = None
 
     return render(request, 'main/profile.html', context={
         'username': username,
-        'customer': customer
+        'customer': customer,
+        'reservation': reservation,
         })
 
 
@@ -81,6 +88,65 @@ def edit_profile(request):
     return render(request, 'main/edit_profile.html', context={
         'info': customer
     })
+
+
+@login_required(login_url='/login/')
+def make_order(request):
+    establishments = Establishment.objects.all()
+    free_tables = Tables.objects.exclude(table_is_reserved=True)
+    dishes = Dish.objects.all()
+
+    if request.method == 'POST':
+        user_id = request.user.id
+        customer = Customer.objects.get(user_id=user_id)
+        user = Reservation.objects.get(user_id=user_id)
+        establishment = request.POST.get('establishment')
+        establishment = Establishment.objects.get(name=establishment)
+        dish = request.POST.get('dish')
+        dish = Dish.objects.get(name=dish)
+        time = request.POST.get('time')
+        reserved_table = free_tables[0]
+
+        user.establishment = establishment
+        user.dish = dish
+        user.time = time
+        user.table = reserved_table
+        user.save()
+
+        reserved_table = Tables.objects.get(id=reserved_table.id)
+        reserved_table.table_is_reserved = True
+        reserved_table.reservation_time = time
+        reserved_table.customer = customer.id
+        reserved_table.establishment = establishment.id
+        reserved_table.save()
+
+    return render(request, 'main/make_order.html', context={
+        'establishments': establishments,
+        # 'free_tables': free_tables,
+        'dishes': dishes
+        })
+
+
+@login_required(login_url='/login/')
+def delete_order(request):
+    return render(request, 'main/delete_order.html')
+
+
+@login_required(login_url='/login/')
+def confirmed_delete_order(request):
+    user = request.user.id
+    reservation = Reservation.objects.get(user_id=user)
+    reservation.time = None
+    reservation.dish_id = None
+    reservation.establishment_id = None
+    reservation.table_id = None
+    reservation.save()
+
+    table_id = reservation.table_id
+    table = Tables.objects.get(id=table_id)
+    table.table_is_reserved = False
+    table.save()
+    return redirect('profile')
 
 
 class LoginUserView(LoginView):

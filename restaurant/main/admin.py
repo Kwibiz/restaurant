@@ -24,7 +24,7 @@ class TablesAdmin(admin.ModelAdmin):
         'table_number', 
         'table_is_reserved', 
         'customer', 
-        'reservaion_time'
+        'reservation_time'
         ]
 
 admin.site.register(Tables, TablesAdmin)
@@ -40,3 +40,15 @@ class DishAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(Dish, DishAdmin)
+
+
+class ReservationAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'establishment',
+        'table',
+        'dish',
+        'time'
+    ]
+
+admin.site.register(Reservation, ReservationAdmin)
