@@ -30,13 +30,13 @@ class TablesAdmin(admin.ModelAdmin):
 admin.site.register(Tables, TablesAdmin)
 
 
-class MenuAdmin(admin.ModelAdmin):
+class DishAdmin(admin.ModelAdmin):
     list_display = [
         'establishment',
-        'dish',
+        'name',
         'ingredients',
         'description',
         'is_vegetarian'
     ]
 
-admin.site.register(Menu, MenuAdmin)
+admin.site.register(Dish, DishAdmin)

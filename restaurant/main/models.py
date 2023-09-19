@@ -33,20 +33,31 @@ class Tables(models.Model):
     def __str__(self) -> str:
         return str(self.table_number)
 
-class Menu(models.Model):
+class Dish(models.Model):
     establishment = models.ForeignKey(Establishment, on_delete=models.CASCADE)
-    dish = models.CharField(max_length=30)
+    name = models.CharField(max_length=30)
     ingredients = models.TextField(blank=True)
     description = models.TextField(blank=True)
     is_vegetarian = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name_plural = "Dishes"
+
     def __str__(self) -> str:
-        return self.dish
+        return self.name
 
 
 class Order(models.Model):
     table = models.OneToOneField(Tables, on_delete=models.CASCADE)
-    dish = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
         return f'{self.dish} for table №{self.table}'
+
+
+class Reservation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    establishment = models.ForeignKey(Establishment, on_delete=models.CASCADE)
+    table = models.OneToOneField(Tables, on_delete=models.CASCADE)
+    dish = models.ForeignKey(Dish, on_delete=models.CASCADE)
+    time = models.DateTimeField()
