@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Menu{% endblock title %}</title>
+</head>
+<body>
+    {% block content %}
+
+        <h1 style="color: darkred; text-align: center;">MENU</h1>
+        <br>
+        <a href="{% url 'profile' %}"><button>Profile</button></a>
+        <br>
+        {% for dish in menu %}
+            <ul>
+                <li><h3>{{ dish.name }}</h3>
+                    <ul>
+                        <li>Description: {{ dish.description }}</li>
+                        <br>
+                        <li>Ingredients: {{ dish.ingredients }}</li>
+                    </ul>
+                </li>
+            </ul>
+        {% endfor %}
+
+    {% endblock content %}
+</body>
+</html>

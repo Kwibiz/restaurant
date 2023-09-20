@@ -149,6 +149,11 @@ def confirmed_delete_order(request):
     return redirect('profile')
 
 
+def menu(request):
+    menu = Dish.objects.all()
+    return render(request, 'main/menu.html', context={'menu': menu})
+
+
 class LoginUserView(LoginView):
     template_name = 'main/login.html'
     next_page = 'index'
