@@ -6,6 +6,8 @@ from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from .models import Customer, Establishment, Tables, Dish, Reservation
 
+from datetime import datetime, timedelta
+
 
 def index(request):
     return render(request, 'main/index.html')
@@ -99,13 +101,45 @@ def make_order(request):
         user_id = request.user.id
         customer = Customer.objects.get(user_id=user_id)
         user = Reservation.objects.get(user_id=user_id)
-        establishment = request.POST.get('establishment')
-        establishment = Establishment.objects.get(name=establishment)
-        dish = request.POST.get('dish')
-        dish = Dish.objects.get(name=dish)
-        time = request.POST.get('time')
+
+        try: 
+            establishment = request.POST.get('establishment')
+            establishment = Establishment.objects.get(name=establishment)
+        except:
+            return render(request, 'main/make_order.html', context={
+                'establishment_empty': True,
+                'establishments': establishments,
+                'dishes': dishes
+            })
+
+        try: 
+            dish = request.POST.get('dish')
+            dish = Dish.objects.get(name=dish)
+        except:
+            return render(request, 'main/make_order.html', context={
+                'dish_empty': True,
+                'establishments': establishments,
+                'dishes': dishes
+            })
+        
+        try:
+            time = request.POST.get('time')
+        except:
+            return render(request, 'main/make_order.html', context={
+                'time_empty': True,
+                'establishments': establishments,
+                'dishes': dishes
+            })
+        
         free_tables = Tables.objects.exclude(table_is_reserved=True)
         reserved_table = free_tables.first()
+
+        if time < str(datetime.now()) or time > str(datetime.now() + timedelta(days=30)):
+            return render(request, 'main/make_order.html', context={
+                'time_error': True,
+                'establishments': establishments,
+                'dishes': dishes
+            })
 
         user.establishment = establishment
         user.dish = dish
@@ -117,6 +151,8 @@ def make_order(request):
         reserved_table.reservation_time = time
         reserved_table.customer = customer
         reserved_table.save()
+
+        return redirect('profile')
 
     return render(request, 'main/make_order.html', context={
         'establishments': establishments,
